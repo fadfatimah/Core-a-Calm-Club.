@@ -1,2 +1,260 @@
 # Core-a-Calm-Club.
 Website for Core &amp; Calm Club - registration and member list
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Core & Calm Club</title>
+<!-- Google font for a friendly look -->
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet" />
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #ffb6c1; /* Baby pink color */
+        margin: 0;
+        padding: 20px;
+        color: #fff;
+    }
+
+    /* Logo style */
+    .logo-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 20px;
+        flex-direction: column;
+    }
+
+    .logo-container img {
+        width: 150px;
+        height: auto;
+        border-radius: 50%;
+        border: 4px solid #fff;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    /* Title style */
+    h1 {
+        font-family: 'Pacifico', cursive;
+        font-size: 2.5em;
+        text-align: center;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        color: #fff;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    /* Form styling */
+    form {
+        max-width: 400px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: rgba(255,255,255,0.8);
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        transition: opacity 0.3s;
+    }
+
+    label {
+        display: block;
+        margin-top: 10px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    input[type="text"] {
+        width: 100%;
+        padding: 8px;
+        margin-top: 6px;
+        margin-bottom: 16px;
+        border: 2px solid #ccc;
+        border-radius: 8px;
+        font-size: 1em;
+    }
+
+    button {
+        width: 100%;
+        background: linear-gradient(45deg, #ff6f61, #ffcc70, #6a82fb);
+        background-size: 600% 600%;
+        animation: gradientAnimation 3s ease infinite;
+        color: #fff;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        font-size: 1.1em;
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+
+    button:hover {
+        transform: scale(1.05);
+    }
+
+    @keyframes gradientAnimation {
+        0% {background-position: 0% 50%;}
+        50% {background-position: 100% 50%;}
+        100% {background-position: 0% 50%;}
+    }
+
+    /* Members table styling */
+    #submittedData {
+        max-width: 600px;
+        margin: 20px auto;
+        background-color: rgba(255,255,255,0.8);
+        padding: 15px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    h2 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: 'Arial', sans-serif;
+    }
+
+    th, td {
+        padding: 10px;
+        border: 1px solid #ccc;
+        text-align: center;
+    }
+
+    th {
+        background-color: #f4f4f4;
+        font-weight: bold;
+    }
+
+    /* Status message styling */
+    #status {
+        text-align: center;
+        margin-top: 10px;
+        font-weight: bold;
+        font-size: 1.1em;
+        color: #fff;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+    }
+</style>
+</head>
+<body>
+
+<div class="logo-container">
+    <!-- Replace the src with your actual logo image URL -->
+    <img src="https://i.imgur.com/yourlogo.png" alt="Core & Calm Club Logo" />
+    <h1>Core & Calm Club</h1>
+</div>
+
+<!-- Barcode scan input (hidden) -->
+<input type="text" id="barcodeInput" placeholder="Scan barcode here" style="opacity:0; position:absolute; left:-9999px;" />
+
+<!-- Status message -->
+<div id="status">Please scan the barcode to enable registration</div>
+
+<!-- Registration form -->
+<form id="joinForm" style="opacity:0.5; pointer-events:none;">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" required />
+
+    <label for="id">ID:</label>
+    <input type="text" id="id" name="id" required />
+
+    <label for="major">Major:</label>
+    <input type="text" id="major" name="major" required />
+
+    <button type="submit">Join</button>
+</form>
+
+<!-- Members list -->
+<div id="submittedData">
+    <h2>Members List</h2>
+    <table id="membersTable">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>ID</th>
+                <th>Major</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Joined members will appear here -->
+        </tbody>
+    </table>
+</div>
+
+<script>
+    const barcodeInput = document.getElementById('barcodeInput');
+    const form = document.getElementById('joinForm');
+    const statusDiv = document.getElementById('status');
+    const tableBody = document.querySelector('#membersTable tbody');
+
+    // Replace this with your actual barcode code
+    const authorizedBarcode = "123456789";
+
+    window.onload = () => {
+        barcodeInput.focus();
+    };
+
+    // When barcode is scanned
+    barcodeInput.addEventListener('input', () => {
+        const scannedCode = barcodeInput.value.trim();
+        if (scannedCode === authorizedBarcode) {
+            statusDiv.textContent = "Barcode accepted! You can now register.";
+            statusDiv.style.color = "green";
+
+            // Enable form
+            form.style.opacity = "1";
+            form.style.pointerEvents = "auto";
+
+            // Clear input
+            barcodeInput.value = "";
+        } else {
+            statusDiv.textContent = "Invalid barcode. Please try again.";
+            statusDiv.style.color = "red";
+            barcodeInput.value = "";
+        }
+    });
+
+    // Handle form submission
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const name = document.getElementById('name').value;
+        const id = document.getElementById('id').value;
+        const major = document.getElementById('major').value;
+
+        const row = document.createElement('tr');
+
+        const nameCell = document.createElement('td');
+        nameCell.textContent = name;
+        const idCell = document.createElement('td');
+        idCell.textContent = id;
+        const majorCell = document.createElement('td');
+        majorCell.textContent = major;
+
+        row.appendChild(nameCell);
+        row.appendChild(idCell);
+        row.appendChild(majorCell);
+
+        tableBody.appendChild(row);
+
+        // Reset form
+        form.reset();
+
+        // Disable form again
+        form.style.opacity = "0.5";
+        form.style.pointerEvents = "none";
+        statusDiv.textContent = "Please scan the barcode to register.";
+        statusDiv.style.color = "white";
+
+        // Focus on scanner input
+        barcodeInput.focus();
+    });
+</script>
+
+</body>
+</html>
